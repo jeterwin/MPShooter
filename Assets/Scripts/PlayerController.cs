@@ -1,8 +1,9 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviourPunCallbacks
 {
     [Header("Movement variables")]
     [SerializeField] private CharacterController characterController;
@@ -23,12 +24,6 @@ public class PlayerController : MonoBehaviour
     {
         get { return Physics.Raycast(groundCheckPoint.transform.position, Vector3.down, rayRange, groundMask); }
     }
-    private void OnEnable()
-    {
-        Transform newTransform = SpawnManager.Instance.GetSpawnPoint();
-        transform.position = newTransform.position;
-        transform.rotation = newTransform.rotation;
-    }
 
     private void OnDrawGizmos()
     {
@@ -42,7 +37,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        HandleMoving();
+       if(photonView.IsMine)
+            HandleMoving();
     }
 
     private void HandleJumping()

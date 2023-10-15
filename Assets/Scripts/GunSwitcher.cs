@@ -1,8 +1,9 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GunSwitcher : MonoBehaviour
+public class GunSwitcher : MonoBehaviourPunCallbacks
 {
     [SerializeField] private List<WeaponScript> weaponScripts;
 
@@ -15,8 +16,12 @@ public class GunSwitcher : MonoBehaviour
     }
     private void Update()
     {
-        if(currentWeapon != inputHandler.NextGun)
-            SwitchGuns();
+        if(photonView.IsMine)
+        {
+            if(currentWeapon != inputHandler.NextGun)
+                SwitchGuns();
+        }
+
     }
 
     private void SwitchGuns()

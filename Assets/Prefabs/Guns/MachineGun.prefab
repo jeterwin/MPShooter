@@ -139,6 +139,7 @@ MonoBehaviour:
   reloadTime: 2
   muzzleFlashLocation: {fileID: 6045752132553990628}
   muzzleFlashPrefab: {fileID: 1782395880954752, guid: 3dd9cf2e209c504448f1c4c6835675cf, type: 3}
+  playerHitImpactPrefab: {fileID: 2813306869016021012, guid: 247cc8560c3d1d7449f43cdf5a3661b4, type: 3}
   bulletImpactPrefab: {fileID: 7553456134366642332, guid: f9f9f5353eee9294da520f676a4e6992, type: 3}
   deleteBulletHoleTime: 2
   deleteMuzzleFlashTime: 1

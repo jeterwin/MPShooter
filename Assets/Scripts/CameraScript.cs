@@ -1,8 +1,9 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraScript : MonoBehaviour
+public class CameraScript : MonoBehaviourPunCallbacks
 {
     [SerializeField] private Transform viewPoint;
     [Header("Mouse variables and constraints")]
@@ -29,7 +30,8 @@ public class CameraScript : MonoBehaviour
     }
     private void Update()
     {
-        HandleRotation();
+        if(photonView.IsMine)
+            HandleRotation();
     }
 
     private void HandleRotation()
@@ -48,6 +50,7 @@ public class CameraScript : MonoBehaviour
     }
     private void LateUpdate()
     {
-        camera.transform.SetPositionAndRotation(viewPoint.transform.position, viewPoint.transform.rotation);
+        if(photonView.IsMine)
+            camera.transform.SetPositionAndRotation(viewPoint.transform.position, viewPoint.transform.rotation);
     }
 }

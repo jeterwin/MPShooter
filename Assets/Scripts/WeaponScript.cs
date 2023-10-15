@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using Photon.Pun;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponScript : MonoBehaviour
+public class WeaponScript : MonoBehaviourPunCallbacks
 {
     private InputHandler inputHandler;
     private CameraScript cameraScript;
@@ -19,6 +20,7 @@ public class WeaponScript : MonoBehaviour
 
     [Header("Prefab References")]
     [SerializeField] private GameObject muzzleFlashPrefab;
+    [SerializeField] private GameObject playerHitImpactPrefab;
     [SerializeField] private GameObject bulletImpactPrefab;
 
     [Header("Settings")]
@@ -33,9 +35,7 @@ public class WeaponScript : MonoBehaviour
     private bool isReloading = false;
     private bool canShoot = true;
     private bool canReload = true;
-
-
-    private void OnEnable()
+    private new void OnEnable()
     {
         isReloading = false;
         canReload = true;
@@ -49,22 +49,25 @@ public class WeaponScript : MonoBehaviour
     }
     void Update()
     {
-        if(remainingShootTime > 0f)
-            UpdateTimers();
-        else
+        if(photonView.IsMine)
         {
-            canShoot = true;
-        }
+            if(remainingShootTime > 0f)
+                UpdateTimers();
+            else
+            {
+                canShoot = true;
+            }
 
-        if(!canShoot || (remainingBullets == 0 && remainingMags == 0) || isReloading) { return; }
+            if(!canShoot || (remainingBullets == 0 && remainingMags == 0) || isReloading) { return; }
 
-        if((inputHandler.PressedReload || remainingBullets == 0) && remainingMags > 0 && canReload && canShoot)
-        {
-            StartCoroutine(Reload());
-        }
-        if (inputHandler.PressedShoot && !isReloading)
-        {
-            Fire();
+            if((inputHandler.PressedReload || remainingBullets == 0) && remainingMags > 0 && canReload && canShoot)
+            {
+                StartCoroutine(Reload());
+            }
+            if (inputHandler.PressedShoot && !isReloading)
+            {
+                Fire();
+            }
         }
     }
 
@@ -98,9 +101,19 @@ public class WeaponScript : MonoBehaviour
         ray.origin = cameraScript.Camera.transform.position;
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            GameObject bulletHole = Instantiate(bulletImpactPrefab, hit.point + (0.002f * hit.normal), Quaternion.LookRotation(hit.normal));
+            if(hit.collider.CompareTag("Player"))
+            {
+                GameObject bulletHole = PhotonNetwork.Instantiate(playerHitImpactPrefab.name, hit.point, Quaternion.identity);
+                
+                hit.collider.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.All, damage);
+            }
+            else
+            {
+                GameObject bulletHole = Instantiate(bulletImpactPrefab, hit.point + (0.002f * hit.normal), Quaternion.LookRotation(hit.normal));
 
-            Destroy(bulletHole, deleteBulletHoleTime);
+                Destroy(bulletHole, deleteBulletHoleTime);
+            }
+
         }
     }
 
