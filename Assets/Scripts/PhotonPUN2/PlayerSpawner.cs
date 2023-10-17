@@ -6,7 +6,12 @@ using Photon.Pun;
 public class PlayerSpawner : MonoBehaviour
 {
     public static PlayerSpawner Instance;
+
+    [SerializeField] private float respawnTime = 3f;
+
     [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private GameObject deathParticlesPrefab;
+
     private GameObject player;
     private void Awake()
     {
@@ -19,6 +24,23 @@ public class PlayerSpawner : MonoBehaviour
         SpawnPlayer();
     }
 
+    public void Die(string killerName)
+    {
+        if(player == null) { return; }
+
+        StartCoroutine(DieCo());
+    }
+    IEnumerator DieCo()
+    {
+        PhotonNetwork.Instantiate(deathParticlesPrefab.name, player.transform.position, Quaternion.identity);
+
+        PhotonNetwork.Destroy(player);
+
+        yield return new WaitForSeconds(respawnTime);
+
+        SpawnPlayer();
+
+    }
     private void SpawnPlayer()
     {
         Transform spawnPoint = SpawnManager.Instance.GetSpawnPoint();

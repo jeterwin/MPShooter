@@ -9,30 +9,37 @@ public class GunSwitcher : MonoBehaviourPunCallbacks
 
     private InputHandler inputHandler;
     private int currentWeapon = 0;
-    private void Start()
+    private void Awake()
     {
         inputHandler = GetComponentInParent<InputHandler>();
-        SwitchGuns();
+    }
+    private void Start()
+    {
+        photonView.RPC("ChangeGunOnNetwork", RpcTarget.All);
     }
     private void Update()
     {
         if(photonView.IsMine)
         {
             if(currentWeapon != inputHandler.NextGun)
-                SwitchGuns();
+            {
+                photonView.RPC("ChangeGunOnNetwork", RpcTarget.All);
+            }
         }
-
     }
-
-    private void SwitchGuns()
+    [PunRPC]
+    void ChangeGunOnNetwork()
     {
         currentWeapon = inputHandler.NextGun;
+        SwitchGuns();
+    }
+    private void SwitchGuns()
+    {
         for(int i = 0; i < weaponScripts.Count; i++)
         {
             if(i == currentWeapon)
             {
                 weaponScripts[currentWeapon].gameObject.SetActive(true);
-                currentWeapon = inputHandler.NextGun;
             }
             else
             {

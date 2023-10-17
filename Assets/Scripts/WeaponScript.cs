@@ -103,15 +103,13 @@ public class WeaponScript : MonoBehaviourPunCallbacks
         {
             if(hit.collider.CompareTag("Player"))
             {
-                GameObject bulletHole = PhotonNetwork.Instantiate(playerHitImpactPrefab.name, hit.point, Quaternion.identity);
+                PhotonNetwork.Instantiate(playerHitImpactPrefab.name, hit.point, Quaternion.identity);
                 
-                hit.collider.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.All, damage);
+                hit.collider.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.All, photonView.Owner.NickName, damage);
             }
             else
             {
-                GameObject bulletHole = Instantiate(bulletImpactPrefab, hit.point + (0.002f * hit.normal), Quaternion.LookRotation(hit.normal));
-
-                Destroy(bulletHole, deleteBulletHoleTime);
+                PhotonNetwork.Instantiate(bulletImpactPrefab.name, hit.point + (0.002f * hit.normal), Quaternion.LookRotation(hit.normal));
             }
 
         }

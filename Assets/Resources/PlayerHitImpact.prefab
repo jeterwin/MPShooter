@@ -4940,4 +4940,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 138358ea105d9d94d8f25f55b66e208b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeToDestroy: 2
+  timeToDestroy: 5

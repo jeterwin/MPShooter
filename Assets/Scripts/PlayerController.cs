@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     [Header("Movement variables")]
     [SerializeField] private CharacterController characterController;
     [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private Animator animator;
 
     [Header("Jumping variables")]
     [SerializeField] private float jumpPower;
@@ -16,6 +17,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject groundCheckPoint;
     [SerializeField] private float rayRange = 1f;
     [SerializeField] private LayerMask groundMask;
+
+    [SerializeField] private GameObject playerModel;
+    [SerializeField] private Transform gunHolder;
+    [SerializeField] private Transform modelGunPoint;
 
     private InputHandler inputHandler;
     private Vector3 movement;
@@ -34,7 +39,19 @@ public class PlayerController : MonoBehaviourPunCallbacks
     {
         inputHandler = GetComponent<InputHandler>();
     }
-
+    private void Start()
+    {
+        if(photonView.IsMine)
+        {
+            playerModel.SetActive(false);
+        }
+        else
+        {
+            gunHolder.parent = modelGunPoint;
+            gunHolder.localPosition = Vector3.zero;
+            gunHolder.localRotation = Quaternion.identity;
+        }
+    }
     private void Update()
     {
        if(photonView.IsMine)
@@ -43,7 +60,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private void HandleJumping()
     {
-        if (isGrounded)
+        if (isGrounded && movement.y != 0)
         {
             movement.y = 0;
         }
@@ -60,6 +77,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
         movement.y = yVel;
 
         HandleJumping();
+
+        animator.SetBool("grounded", isGrounded);
+        animator.SetFloat("speed", Mathf.Abs(movement.x));
 
         characterController.Move(Time.deltaTime * moveSpeed * movement);
     }
