@@ -224,7 +224,7 @@ MonoBehaviour:
   characterController: {fileID: 548275826630599444}
   moveSpeed: 5
   animator: {fileID: 8551166084795386443}
-  jumpPower: 2
+  jumpPower: 3
   groundCheckPoint: {fileID: 6929320372093514444}
   rayRange: 0.15
   groundMask:

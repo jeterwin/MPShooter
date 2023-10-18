@@ -21,7 +21,11 @@ public class HealthScript : MonoBehaviourPunCallbacks
         }
     }
     [PunRPC]
-    public void TakeDamage(string damager, int damage)
+    public void TakeDamage(string damager, int damage, int actor)
+    {
+        DealDamage(damager, damage, actor);
+    }
+    public void DealDamage(string damager, int damage, int actor)
     {
         if(photonView.IsMine)
         {
@@ -30,6 +34,8 @@ public class HealthScript : MonoBehaviourPunCallbacks
             {
                 health = 0;
                 PlayerSpawner.Instance.Die(damager);
+
+                MatchManager.Instance.UpdateStatsSend(actor, 0, 1);
             }
             
             UIController.Instance.UpdateHealth(health);

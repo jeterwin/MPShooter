@@ -105,7 +105,7 @@ public class WeaponScript : MonoBehaviourPunCallbacks
             {
                 PhotonNetwork.Instantiate(playerHitImpactPrefab.name, hit.point, Quaternion.identity);
                 
-                hit.collider.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.All, photonView.Owner.NickName, damage);
+                hit.collider.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.All, photonView.Owner.NickName, damage, PhotonNetwork.LocalPlayer.ActorNumber);
             }
             else
             {

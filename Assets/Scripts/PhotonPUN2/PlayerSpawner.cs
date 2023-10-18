@@ -28,6 +28,8 @@ public class PlayerSpawner : MonoBehaviour
     {
         if(player == null) { return; }
 
+        MatchManager.Instance.UpdateStatsSend(PhotonNetwork.LocalPlayer.ActorNumber, 1, 1);
+
         StartCoroutine(DieCo());
     }
     IEnumerator DieCo()

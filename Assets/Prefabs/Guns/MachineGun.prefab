@@ -135,7 +135,7 @@ MonoBehaviour:
   damage: 25
   magSize: 7
   magAmount: 3
-  fireRate: 0.5
+  fireRate: 0.1
   reloadTime: 2
   muzzleFlashLocation: {fileID: 6045752132553990628}
   muzzleFlashPrefab: {fileID: 1782395880954752, guid: 3dd9cf2e209c504448f1c4c6835675cf, type: 3}

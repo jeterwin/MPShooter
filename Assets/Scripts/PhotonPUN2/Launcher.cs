@@ -56,7 +56,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.JoinLobby();
 
-        PhotonNetwork.AutomaticallySyncScene = true;
+        PhotonNetwork.AutomaticallySyncScene = false;
 
         loadingText.text = "Joining Lobby...";
     }
@@ -69,7 +69,6 @@ public class Launcher : MonoBehaviourPunCallbacks
 
         PhotonNetwork.NickName = PlayerPrefs.GetString("playerName");
     }
-
     public override void OnJoinedRoom()
     {
         closeMenus();
@@ -80,6 +79,17 @@ public class Launcher : MonoBehaviourPunCallbacks
         ListAllPlayers();
 
         startButton.SetActive(PhotonNetwork.IsMasterClient);
+
+        if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("IsPlaying"))
+        {
+            bool isPlaying = (bool)PhotonNetwork.CurrentRoom.CustomProperties["IsPlaying"];
+            if(isPlaying)
+                PhotonNetwork.LoadLevel(LevelToPlay);
+        }
+        else
+        {
+            PhotonNetwork.AutomaticallySyncScene = true;
+        }
     }
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
@@ -166,7 +176,12 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public void StartGame()
     {
+        ExitGames.Client.Photon.Hashtable customRoomProperties = new ExitGames.Client.Photon.Hashtable();
+        customRoomProperties["IsPlaying"] = true;
+        PhotonNetwork.CurrentRoom.SetCustomProperties(customRoomProperties);
+
         PhotonNetwork.LoadLevel(LevelToPlay);
+
     }
 
     public void JoinRoom(RoomInfo roomInfo)
@@ -176,6 +191,7 @@ public class Launcher : MonoBehaviourPunCallbacks
         closeMenus();
         loadingText.text = "Joining Room: " + roomInfo.Name;
         loadingScreen.SetActive(true);
+
     }
 
     public void CloseGame()
