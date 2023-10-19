@@ -48,6 +48,31 @@ public class MatchManager : MonoBehaviour, IOnEventCallback
             }
         }
     }
+    List<PlayerInfo> SortPlayers(List<PlayerInfo> players)
+    {
+        List<PlayerInfo> sorted = new();
+
+        while(sorted.Count < players.Count)
+        {
+            int highest = -1;
+            PlayerInfo selectedPlayed = players[0];
+
+            foreach(PlayerInfo player in players)
+            {
+                if(sorted.Contains(player)) { continue; }
+
+                if(player.kills > highest)
+                {
+                    selectedPlayed = player;
+                    highest = player.kills;
+                }
+            }
+
+            sorted.Add(selectedPlayed);
+        }
+
+        return sorted;
+    }
     public void OnEvent(EventData photonEvent)
     {
         if(photonEvent.Code < 200)
@@ -175,6 +200,10 @@ public class MatchManager : MonoBehaviour, IOnEventCallback
                     UIController.Instance.UpdateStatsDisplay(allPlayers[i]);
                 }
 
+                if(UIController.Instance.leaderboard.activeInHierarchy)
+                {
+                    ShowLeaderboard();
+                }
                 break;
             }
         }
@@ -192,7 +221,9 @@ public class MatchManager : MonoBehaviour, IOnEventCallback
 
         UIController.Instance.leaderboardPlayerDisplay.gameObject.SetActive(false);
 
-        foreach(PlayerInfo player in allPlayers)
+        List<PlayerInfo> sorted = SortPlayers(allPlayers);
+
+        foreach(PlayerInfo player in sorted)
         {
             LeaderboardPlayer lp = Instantiate(UIController.Instance.leaderboardPlayerDisplay,
                 UIController.Instance.leaderboardPlayerDisplay.transform.parent);
